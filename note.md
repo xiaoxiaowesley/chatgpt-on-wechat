@@ -51,3 +51,54 @@ chatgpt-on-wechat
 ├── translate  # 翻译相关的代码，包括各种翻译器，例如 baidu，google 等
 │
 └── voice  # 语音相关的代码，包括各种语音引擎，例如 azure，openai，baidu 等
+
+# bridge模块
+
+这个 bridge 模块包含三个文件：bridge.py, context.py, 和 reply.py。
+
+bridge.py
+Bridge 类是一个单例类，它在初始化时根据配置文件创建各种类型的 bot（如聊天机器人、语音到文本转换机器人、文本到语音转换机器人、翻译机器人等），并将它们存储在一个字典中。
+
+Bridge 类的主要方法包括：
+
+get_bot(self, typename)：根据类型名称获取对应的 bot。如果 bot 尚未创建，那么会创建一个新的 bot 并存储在字典中。
+get_bot_type(self, typename)：获取给定类型名称的 bot 类型。
+fetch_reply_content(self, query, context: Context) -> Reply：获取聊天机器人的回复。
+fetch_voice_to_text(self, voiceFile) -> Reply：获取语音到文本转换机器人的转换结果。
+fetch_text_to_voice(self, text) -> Reply：获取文本到语音转换机器人的转换结果。
+fetch_translate(self, text, from_lang="", to_lang="en") -> Reply：获取翻译机器人的翻译结果。
+context.py
+Context 类用于存储上下文信息，包括类型（例如文本消息、音频消息、图片消息等）、内容以及其他关键字参数。
+
+ContextType 是一个枚举类，定义了可能的上下文类型。
+
+reply.py
+Reply 类用于存储回复信息，包括类型（例如文本、音频文件、图片文件等）和内容。
+
+ReplyType 是一个枚举类，定义了可能的回复类型。
+
+总的来说，bridge 模块可能是用于管理和协调各种 bot 的中间层，它根据上下文信息调用合适的 bot 并获取回复。
+
+# bot模块 
+
+这个 bot 模块包含了多个文件，其中有几个主要的文件：bot.py, bot_factory.py, 和 session_manager.py。
+
+bot.py
+这个文件定义了一个 Bot 的抽象基类。这个类只有一个方法 reply(self, query, context: Context = None) -> Reply，用于获取 bot 的回复。具体的 bot 类应该继承这个基类并实现这个方法。
+
+bot_factory.py
+这个文件定义了一个 create_bot(bot_type) 函数，根据 bot 类型创建对应的 bot 实例。目前支持的 bot 类型包括：
+
+const.BAIDU：使用 Baidu Unit 对话接口的 bot。
+const.CHATGPT：使用 ChatGPT 网页端 web 接口的 bot。
+const.OPEN_AI：使用 OpenAI 官方对话模型 API 的 bot。
+const.CHATGPTONAZURE：使用 Azure chatgpt 服务的 bot。
+const.LINKAI：使用 LinkAI 的 bot。
+如果给出的 bot 类型不在这些已知类型中，函数将会抛出一个 RuntimeError。
+
+session_manager.py
+这个文件定义了一个 Session 类和一个 SessionManager 类。Session 类用于存储会话信息，包括会话 ID、消息列表和系统提示。SessionManager 类用于管理 Session 实例，包括创建新的会话、添加查询到会话、添加回复到会话、清除会话等。
+
+这个模块的其他文件（例如 chat_gpt_bot.py, open_ai_bot.py 等）应该是具体 bot 类型的实现，它们继承了 Bot 基类并实现了 reply 方法。
+
+总的来说，bot 模块用于管理和控制各种类型的 bot，每个 bot 都可以处理某种特定类型的查询并生成回复。
