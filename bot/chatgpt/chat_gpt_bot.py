@@ -17,6 +17,9 @@ from common.token_bucket import TokenBucket
 from config import conf, load_config
 from bardapi import Bard
 
+import requests
+from bardapi.constants import SESSION_HEADERS
+from bardapi import Bard
 
 # proxies = {
 #     'http': 'http://127.0.0.1:7890',
@@ -125,9 +128,21 @@ class ChatGPTBot(Bot, OpenAIImage):
         """
 
 
-        token = 'YAjnqB8pJZx77-e9hXm5KyDbda0nB1W27smvXdUx64eJ0SlMV9W8idpxoXWkSiFAiq8yeQ.'
-        # bard = Bard(token=token, timeout=30)
-        bard = Bard(token=token, language='chinese (simplified)')
+
+
+        token = "YAjnqB8pJZx77-e9hXm5KyDbda0nB1W27smvXdUx64eJ0SlMV9W8idpxoXWkSiFAiq8yeQ."
+
+        bardSession = requests.Session()
+        bardSession.headers = SESSION_HEADERS
+        bardSession.cookies.set("__Secure-1PSID", token)
+        bardSession.cookies.set("__Secure-1PSIDTS","sidts-CjIBPu3jIY9jU3w2t0tCYBXzI8AMJOodvZ-rg63EdrRulYajfmlUFvHe_SdYlc8hzRcwNhAA")
+        bardSession.cookies.set("__Secure-1PSIDCC", "APoG2W-pJAMoUj46SX8OpTwusGqP3XMmE_-5y3gYyIPXjrN3nIw93MDgUuL0NR5b3eLx53qhjQ")
+
+        bard = Bard(token=token, session=bardSession, language='chinese (simplified)')
+
+        # token = 'YAjIMD8YMo0RR5OuBGMZ58k1_CuQcB0gXWTikfSpDv3SivBWT8vV6rUxjxQlTQh10sj2LA.'
+        # # bard = Bard(token=token, timeout=30)
+        # bard = Bard(token=token, language='chinese (simplified)')
 
         #   {
         #             "content": str,
